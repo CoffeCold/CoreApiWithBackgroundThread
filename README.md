@@ -32,6 +32,24 @@ CoreMVCClient
 ```
 
 Get the opened client browser to see the system
+## remarks
+This system is build on a template of a database api/asp.net MVC client
+
+###Parts not finished:
+
+```
+- background task processing system : Asked is to start a task (configured) in a background pool and return the controller call 
+Made some preparations but could not get it to work, finally it 
+- Unit test : some unit test were added but they were of the controllers of the template
+```
+###Architecture
+```
+Domain layers : Batch, bulk
+Vertical : Controllers -> Services - > Contexts (Models)
+Service : two methods Check and GetLogs are common for both serivices : they reside under one base interface
+Scalability by background pool of tasks
+```
+
 
 ## Running the tests
 

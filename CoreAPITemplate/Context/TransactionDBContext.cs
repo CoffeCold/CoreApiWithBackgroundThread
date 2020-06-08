@@ -13,6 +13,10 @@ namespace CoreAPI.Models
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
+        public DbSet<TaskSetting> TaskSettings { get; set; }
+        public DbSet<ProcessLog> ProcessLogs { get; set; }
+        public DbSet<ProcessState> ProcessStates { get; set; }
+
         public TransactionDBContext(DbContextOptions<TransactionDBContext> options) : base(options)
         {
         }
@@ -34,6 +38,9 @@ namespace CoreAPI.Models
         {
             modelBuilder.Entity<Account>();
             modelBuilder.Entity<Transaction>();
+            modelBuilder.Entity<TaskSetting>();
+            modelBuilder.Entity<ProcessLog>();
+            modelBuilder.Entity<ProcessState>();
         }
     }
 }
