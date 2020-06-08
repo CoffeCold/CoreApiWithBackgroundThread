@@ -39,7 +39,8 @@ This system is build on a template of a database api/asp.net MVC client
 
 ```
 - background task processing system : Asked is to start a task (configured) in a background pool and return the controller call 
-Made some preparations but could not get it to work, finally it 
+Made some preparations but could not get it to work.
+The idea is that task are started in a queue and that after start it returns
 - Unit test : some unit test were added but they were of the controllers of the template
 ```
 ###Architecture
@@ -87,7 +88,7 @@ Deploy this on a live system
 
 ## Authors
 
-* **N van Veen Thompson** - *Initial work* - [Fullstackstories](http://fullstackstories.net)
+* **N van Veen ** - *Initial work* - [Fullstackstories](http://fullstackstories.net)
 
 
 ## License
