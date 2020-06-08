@@ -12,15 +12,27 @@ namespace CoreAPI.Helpers
     {
         private readonly BlockingCollection<TaskSetting> _tasks;
 
-        public TasksToRun() => _tasks = new BlockingCollection<TaskSetting>();
-
+        public TasksToRun()
+        {
+            _tasks = new BlockingCollection<TaskSetting>();
+        }
         public int Enqueue(TaskSetting settings)
         {
             _tasks.Add(settings);
             return settings.Id; 
         }
 
-        public TaskSetting Dequeue(CancellationToken token) => _tasks.Take(token);
+        public TaskSetting Dequeue(CancellationToken token)
+        {
+            if (_tasks.Any())
+            {
+                return _tasks.Take(token);
+            }
+            else 
+            {
+                return null; 
+            }
+        }
 
         internal ProcessState GetState(TaskSetting taskSettings)
         {

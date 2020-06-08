@@ -51,7 +51,7 @@ namespace CoreAPI
             var connectionstrings = connectionStringsSection.Get<ConnectionStrings>();
 
             services.AddSingleton<TasksToRun, TasksToRun>();
-//            services.AddHostedService<MyBackgroundService>();
+            services.AddHostedService<MyBackgroundService>();
             services.AddScoped<IBatchService, BatchService>();
             services.AddScoped<IBulkService, BulkService>();
 

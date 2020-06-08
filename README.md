@@ -61,7 +61,9 @@ Run the test in CoreXUnitTest
 Postman test
 
 ```
-Test post
+To run Batch tasks (fire and forget ):
+POST api/Batch Body : {"id":1,"description":"abc"}
+outcome : all tasks will be excuted one by one.
 ```
 
 ### And coding style tests
@@ -77,8 +79,8 @@ Give an example
 Deploy this on a live system
 
 ## Built With
-
-* [AnyLink](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
+* [Stackoverflow](https://stackoverflow.com/questions/49813628/run-a-background-task-from-a-controller-action-in-asp-net-core-2) - asp.net core 2.x, the setup of the pattern
+* [Stackoverflow](https://stackoverflow.com/questions/58436732/migration-to-asp-core-3-how-to-migrate-backround-services-service-added-throu) - asp.net core 3.x, issue for core 3.x
 
 ## Contributing
 
