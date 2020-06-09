@@ -10,19 +10,19 @@ namespace CoreAPI.Helpers
 {
     public class TasksToRun
     {
-        private readonly BlockingCollection<TaskSetting> _tasks;
+        private readonly BlockingCollection<JobSettings> _tasks;
 
         public TasksToRun()
         {
-            _tasks = new BlockingCollection<TaskSetting>();
+            _tasks = new BlockingCollection<JobSettings>();
         }
-        public int Enqueue(TaskSetting settings)
+        public Guid Enqueue(JobSettings settings)
         {
             _tasks.Add(settings);
-            return settings.Id; 
+            return settings.JobId; 
         }
 
-        public TaskSetting Dequeue(CancellationToken token)
+        public JobSettings Dequeue(CancellationToken token)
         {
             if (_tasks.Any())
             {
@@ -34,11 +34,7 @@ namespace CoreAPI.Helpers
             }
         }
 
-        internal ProcessState GetState(TaskSetting taskSettings)
-        {
-            //todo
-            return new ProcessState() {  Id= taskSettings.Id , Logdate= DateTime.Now, State = "abc"};
-        }
+ 
     }
  
     }

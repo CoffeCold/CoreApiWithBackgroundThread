@@ -17,21 +17,22 @@ namespace CoreAPI.Controllers
     {
         private readonly ILogger<BulkController> _logger;
         private IBulkService _bulkService;
-
-        public BulkController(TasksToRun tasks, ILogger<BulkController> logger, IBulkService bulkService)
+        private IJobManagementService _jobManagementService;
+        public BulkController(TasksToRun tasks, ILogger<BulkController> logger, IBulkService bulkService, IJobManagementService jobManagementService)
         {
             _logger = logger;
             _bulkService = bulkService;
+            _jobManagementService = jobManagementService;
         }
 
         // GET: api/Bulk/State/2432546789
-        [HttpGet("state/{id:int}")]
+        [HttpGet("state/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProcessState>> GetState(int Taskid)
+        public async Task<ActionResult<JobState>> GetState(Guid Taskid)
         {
-            TaskSetting ts = new TaskSetting() { Id = Taskid };
-            ProcessState state = await _bulkService.Check(ts);
+            JobSettings ts = new JobSettings() { JobId = Taskid };
+            JobState state = await _jobManagementService.GetState(ts);
             if (state == null)
             {
                 return NotFound();
@@ -40,13 +41,13 @@ namespace CoreAPI.Controllers
         }
 
         // GET: api/Bulk/Logs?Taskid=12432546789
-        [HttpGet("logs/{id:int}")]
+        [HttpGet("logs/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ProcessLog>>> GetLogs(int Taskid)
+        public async Task<ActionResult<IEnumerable<JobLog>>> GetLogs(Guid Taskid)
         {
-            TaskSetting ts = new TaskSetting() { Id = Taskid };
-            var logs = await _bulkService.GetLogs(ts);
+            JobSettings ts = new JobSettings() { JobId = Taskid };
+            var logs = await _jobManagementService.GetLogs(ts);
             if (logs == null)
             {
                 return NotFound();
@@ -58,17 +59,17 @@ namespace CoreAPI.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TaskSetting>> Entertask(TaskSetting taskset)
+        public async Task<ActionResult<JobSettings>> Entertask(JobSettings taskset)
         {
-            _logger.LogInformation("task entered {0}", taskset.Id);
+            _logger.LogInformation("task entered {0}", taskset.JobId);
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
 
-            TaskSetting taskSettings = await _bulkService.StartBulk(taskset);
-            if (taskSettings != null)
+            JobSettings jobSettings = await _jobManagementService.ScheduleJob(taskset);
+            if (jobSettings != null)
             {
-                return Ok(taskSettings);
+                return Ok(jobSettings);
             }
             return BadRequest();
         }

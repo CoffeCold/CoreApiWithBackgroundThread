@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
+using System.Threading;
 using CoreAPI.Models;
 using CoreAPI.Helpers;
 
@@ -15,39 +13,31 @@ namespace CoreAPI.Services
 {
 
 
-    public class BulkService : IBulkService, IGenericService, IDisposable
+    public class BulkService : IBulkService, IDisposable
     {
 
         private TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<BulkService> _logger;
-        private readonly TasksToRun _tasks;
 
 
-        public BulkService(ILogger<BulkService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context, TasksToRun tasks)
+        public BulkService(ILogger<BulkService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context)
         {
             _logger = logger;
             _appSettings = appSettings.Value;
             _transactionDBContext = context;
-            _tasks = tasks;
         }
 
-        public async Task<IEnumerable<ProcessLog>> GetLogs(TaskSetting taskSettings)
-        {
-            return await _transactionDBContext.ProcessLogs.Where(p => p.Id == taskSettings.Id).ToListAsync();
-        }
-        public async Task<TaskSetting> StartBulk(TaskSetting settings)
-        {
-             _tasks.Enqueue(settings);
-            return settings; 
+ 
 
-        }
-        public async Task<ProcessState> Check(TaskSetting taskSettings)
-        {
-            ProcessState processtate =  _tasks.GetState(taskSettings);
-            return processtate; 
-        }
 
+        public void ProcessBulk(JobSettings taskToRun)
+        {
+            _logger.LogInformation("ProcessBatch {0} called", taskToRun.JobId);
+            Thread.Sleep(5000);
+            _logger.LogInformation("ProcessBatch {0} ended", taskToRun.JobId);
+            return;
+        }
 
 
         #region IDisposable Support

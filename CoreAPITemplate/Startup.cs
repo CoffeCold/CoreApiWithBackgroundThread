@@ -54,11 +54,11 @@ namespace CoreAPI
             services.AddHostedService<MyBackgroundService>();
             services.AddScoped<IBatchService, BatchService>();
             services.AddScoped<IBulkService, BulkService>();
-
+            services.AddScoped<IJobManagementService, JobManagementService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITransactionsService, TransactionsService>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddDbContext<TransactionDBContext>(options =>
      options.UseSqlServer(connectionstrings.TransactionDBConstr));
         }

@@ -1,39 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
 using CoreAPI.Models;
-using CoreAPI.Helpers;
 
 namespace CoreAPI.Services
 {
 
-    public interface IBatchService : IGenericService
+    public interface IBatchService 
     {
-        Task<TaskSetting> StartBatch(TaskSetting taskSettings);
-    
+        void ProcessBatch(JobSettings jobToRun);
+    }
+    public interface IBulkService 
+    {
+        void ProcessBulk(JobSettings jobToRun);
+
 
     }
-    public interface IBulkService : IGenericService
+    public interface IJobManagementService
     {
-        Task<TaskSetting> StartBulk(TaskSetting taskSettings);
-   
+        Task<JobState> GetState(JobSettings jobSettings);
+        Task<IEnumerable<JobLog>> GetLogs(JobSettings jobSettings);
+        Task<JobSettings> ScheduleJob(JobSettings jobSettings);
 
-    }
-    public interface IGenericService
-    {
-        Task<ProcessState> Check(TaskSetting taskSettings);
-        Task<IEnumerable<ProcessLog>> GetLogs(TaskSetting taskSettings);
+
     }
 
 }

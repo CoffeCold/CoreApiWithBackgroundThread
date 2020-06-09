@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 using CoreAPI.Models;
 using CoreAPI.Helpers;
@@ -15,7 +16,7 @@ namespace CoreAPI.Services
 {
 
 
-    public class BatchService : IBatchService,IGenericService, IDisposable
+    public class BatchService : IBatchService, IDisposable
     {
 
         private TransactionDBContext _transactionDBContext;
@@ -32,25 +33,21 @@ namespace CoreAPI.Services
             _tasks = tasks;
         }
 
-        public async Task<IEnumerable<ProcessLog>> GetLogs(TaskSetting taskSettings)
-        {
-            // stub for time being
-            var list =  new List<ProcessLog>();
-            list.Add(new ProcessLog() {  Id= 12, Logcomment = "abc", Logdate = DateTime.Now});
-            list.Add(new ProcessLog() { Id = 13, Logcomment = "abc", Logdate = DateTime.Now });
-            return list;
-            //return await _transactionDBContext.ProcessLogs.Where(p => p.Id == taskSettings.Id).ToListAsync();
-        }
-        public async Task<TaskSetting> StartBatch(TaskSetting settings)
+ 
+        public async Task<JobSettings> StartBatch(JobSettings settings)
         {
              _tasks.Enqueue(settings);
-            return settings; 
+            return await Task.FromResult(settings); 
 
         }
-        public async Task<ProcessState> Check(TaskSetting taskSettings)
+
+
+        public void ProcessBatch(JobSettings taskToRun)
         {
-            ProcessState processtate =  _tasks.GetState(taskSettings);
-            return processtate; 
+            _logger.LogInformation("ProcessBatch {0} called", taskToRun.JobId);
+            Thread.Sleep(5000);
+            _logger.LogInformation("ProcessBatch {0} ended", taskToRun.JobId);
+            return ;
         }
 
 

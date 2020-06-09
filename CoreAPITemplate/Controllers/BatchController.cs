@@ -17,21 +17,22 @@ namespace CoreAPI.Controllers
     {
         private readonly ILogger<BatchController> _logger;
         private IBatchService _batchService;
-
-        public BatchController(TasksToRun tasks, ILogger<BatchController> logger, IBatchService batchService, TasksToRun task)
+        private IJobManagementService _jobAdministrationService; 
+        public BatchController( ILogger<BatchController> logger, IBatchService batchService, IJobManagementService jobAdministrationService)
         {
             _logger = logger;
             _batchService = batchService;
+            _jobAdministrationService = jobAdministrationService;
         }
 
-        // GET: api/Batch/state/123
-        [HttpGet("state/{id:int}")]
+        // GET: api/Batch/state/69562d2a-6b52-47a4-8089-203efa02a3f0
+        [HttpGet("state/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProcessState>> GetState(int id)
+        public async Task<ActionResult<JobState>> GetState(Guid id)
         {
-            TaskSetting ts = new TaskSetting() { Id = id };
-            ProcessState state = await _batchService.Check(ts);
+            JobSettings ts = new JobSettings() { JobId = id };
+            JobState state = await _jobAdministrationService.GetState(ts);
             if (state == null)
             {
                 return NotFound();
@@ -39,14 +40,14 @@ namespace CoreAPI.Controllers
             return Ok(state);
         }
 
-        // GET: api/Batch/logs/12
-        [HttpGet("logs/{id:int}")]
+        // GET: api/Batch/logs/69562d2a-6b52-47a4-8089-203efa02a3f0
+        [HttpGet("logs/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ProcessLog>>> GetLogs(int id)
+        public async Task<ActionResult<IEnumerable<JobLog>>> GetLogs(Guid id)
         {
-            TaskSetting ts = new TaskSetting() { Id = id };
-            var logs = await _batchService.GetLogs(ts);
+            JobSettings ts = new JobSettings() { JobId = id };
+            var logs = await _jobAdministrationService.GetLogs(ts);
             if (logs == null)
             {
                 return NotFound();
@@ -58,17 +59,17 @@ namespace CoreAPI.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TaskSetting>> Entertask(TaskSetting taskset)
+        public async Task<ActionResult<JobSettings>> Entertask(JobSettings taskset)
         {
-            _logger.LogInformation("task entered {0}", taskset.Id);
+            _logger.LogInformation("task entered {0}", taskset.JobId);
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (taskset.JobId != new Guid()) return BadRequest(ModelState);
 
-
-            TaskSetting taskSettings = await _batchService.StartBatch(taskset);
-            if (taskSettings != null)
+            JobSettings jobSettings = await _jobAdministrationService.ScheduleJob(taskset);
+            if (jobSettings != null)
             {
-                return Ok(taskSettings);
+                return Ok(jobSettings);
             }
             return BadRequest();
         }
