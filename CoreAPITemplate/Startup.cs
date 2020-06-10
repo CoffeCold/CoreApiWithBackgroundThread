@@ -56,8 +56,6 @@ namespace CoreAPI
             services.AddScoped<IBatchService, BatchService>();
             services.AddScoped<IBulkService, BulkService>();
 
-            services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<ITransactionsService, TransactionsService>();
 
             services.AddControllers().AddNewtonsoftJson();
             services.AddDbContext<TransactionDBContext>(options =>

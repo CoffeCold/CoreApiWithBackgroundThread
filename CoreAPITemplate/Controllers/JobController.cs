@@ -13,23 +13,37 @@ namespace CoreAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BulkController : ControllerBase
+    public class JobController : ControllerBase
     {
-        private readonly ILogger<BulkController> _logger;
-        private readonly IJobManagementService _jobManagementService;
-        public BulkController( ILogger<BulkController> logger, IJobManagementService jobManagementService)
+        private readonly ILogger<JobController> _logger;
+        private readonly IJobManagementService _jobManagementService; 
+        public JobController( ILogger<JobController> logger, IJobManagementService jobAdministrationService)
         {
             _logger = logger;
-            _jobManagementService = jobManagementService;
+            _jobManagementService = jobAdministrationService;
         }
 
-        // GET: api/Bulk/state/69562d2a-6b52-47a4-8089-203efa02a3f0
+        // GET: api/Job
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<Job>>> GetAll()
+        {
+            IEnumerable<Job> jobs = await _jobManagementService.GetAll();
+            if (jobs == null)
+            {
+                return NotFound();
+            }
+            return Ok(jobs);
+        }
+
+        // GET: api/Job/state/69562d2a-6b52-47a4-8089-203efa02a3f0
         [HttpGet("state/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Job>> GetState(Guid JobId)
+        public async Task<ActionResult<Job>> GetState(Guid id)
         {
-            Job job = await _jobManagementService.GetState(JobId);
+            Job job = await _jobManagementService.GetState(id);
             if (job == null)
             {
                 return NotFound();
@@ -37,12 +51,13 @@ namespace CoreAPI.Controllers
             return Ok(job);
         }
 
-        // GET: api/Bulk/logs/69562d2a-6b52-47a4-8089-203efa02a3f0
+        // GET: api/Job/logs/69562d2a-6b52-47a4-8089-203efa02a3f0
         [HttpGet("logs/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<JobLog>>> GetLogs(Guid id)
         {
+            //TODO extend with other properties
             JobQuery jobQuery = new JobQuery() { JobId = id };
             var logs = await _jobManagementService.GetLogs(jobQuery);
             if (logs == null)
@@ -52,8 +67,8 @@ namespace CoreAPI.Controllers
             return Ok(logs);
         }
 
-        // Post: api/bulk
-        // Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
+        // Post: api/Job
+        // Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Job"}
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,7 +87,5 @@ namespace CoreAPI.Controllers
             return BadRequest();
         }
 
-
-
-      }
+    }
 }

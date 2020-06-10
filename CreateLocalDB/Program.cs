@@ -2,6 +2,7 @@
 using CoreAPI.Models;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace CreateLocalDB
 {
@@ -19,22 +20,14 @@ namespace CreateLocalDB
 
             }
 
-            using (var context = new TransactionDBContext())
-            {
-                Console.WriteLine(context.Set<Account>().FirstOrDefault().Iban);
-            }
+ 
         }
 
         private static void PopulateDB(TransactionDBContext context)
         {
-            var account1 = context.Add(new Account() { Name = "Janssen", City = "Amsterdam", Iban = "12AS12432546789" }).Entity;
-            var account2 = context.Add(new Account() { Name = "Pietersen", City = "Rotterdam", Iban = "24EZ984364392445" }).Entity;
-            var account3 = context.Add(new Account() { Name = "Dijkstra", City = "Leeuwarden", Iban = "36OP4579812465" }).Entity;
-
-            var transaction1 = context.Add(new Transaction() { Account = account1, Amount = (Decimal)23.12 ,  Counterparty = "12AS12432546789" , Date = DateTime.Now, Id = Guid.NewGuid()}).Entity;
-            var transaction2 = context.Add(new Transaction() { Account = account2, Amount = (Decimal)56, Counterparty = "24EZ984364392445", Date = DateTime.Now, Id = Guid.NewGuid() }).Entity;
-            var transaction3 = context.Add(new Transaction() { Account = account3, Amount = (Decimal)67.76, Counterparty = "24EZ984364392445", Date = DateTime.Now, Id = Guid.NewGuid() }).Entity;
-            var transaction4 = context.Add(new Transaction() { Account = account1, Amount = (Decimal)289.89, Counterparty = "36OP4579812465", Date = DateTime.Now, Id = Guid.NewGuid() }).Entity;
+                
+            var job1 = context.Add(new Job() { JobId = new Guid("69562d2a-6b52-47a4-8089-203efa02a3f0"),  Description = "foo",  ExecutionDomain = ExecutionDomain.Batch }).Entity;
+            var log1 = context.Add(new JobLog() { LogId = new Guid("78562d2a-6b52-47a4-8089-203efa02a3f0"),  JobId = new Guid("69562d2a-6b52-47a4-8089-203efa02a3f0"), Logcomment="bar", Logdate = DateTime.Now}).Entity;
         }
     }
 }

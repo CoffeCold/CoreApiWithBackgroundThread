@@ -30,6 +30,10 @@ namespace CoreAPI.Models
 
         public string Description { get; set; }
 
-        public ICollection<JobLog> Logs { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public JobState JobState { get; set; }
+
+
+        public ICollection<JobLog> JobLogs { get; set; }
     }
 }

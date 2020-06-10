@@ -18,54 +18,54 @@ using CoreAPI.Models;
 
 namespace CoreMVCClient.Services
 {
-    public interface IAccountsService
+    public interface IJobsService
     {
-        Task<IEnumerable<Account>> GetAsync();
+        Task<IEnumerable<Job>> GetAsync();
 
-        Task<Account> GetAsync(string iban);
+        Task<Job> GetAsync(string iban);
 
         Task DeleteAsync(string iban);
 
-        Task<Account> AddAsync(Account Account);
+        Task<Job> AddAsync(Job Job);
 
-        Task<Account> EditAsync(Account Account);
+        Task<Job> EditAsync(Job Job);
     }
 
 
 
-    public static class AccountsServiceExtensions
+    public static class JobsServiceExtensions
     {
-        public static void AddAccountsService(this IServiceCollection services, IConfiguration configuration)
+        public static void AddJobsService(this IServiceCollection services, IConfiguration configuration)
         {
             // https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
-            services.AddHttpClient<IAccountsService, AccountsService>();
+            services.AddHttpClient<IJobsService, JobsService>();
         }
     }
 
     /// <summary></summary>
-    /// <seealso cref="AccountsClient.Services.IAccountsService" />
-    public class AccountsService : IAccountsService
+    /// <seealso cref="JobsClient.Services.IJobsService" />
+    public class JobsService : IJobsService
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly HttpClient _httpClient;
         private readonly string _coreApiBaseAddress = string.Empty;
 
-        public AccountsService( HttpClient httpClient, IConfiguration configuration, IHttpContextAccessor contextAccessor)
+        public JobsService( HttpClient httpClient, IConfiguration configuration, IHttpContextAccessor contextAccessor)
         {
             _httpClient = httpClient;
             _contextAccessor = contextAccessor;
             _coreApiBaseAddress = configuration["CoreApi:ApiBaseAddress"];
         }
 
-        public async Task<IEnumerable<Account>> GetAsync()
+        public async Task<IEnumerable<Job>> GetAsync()
         {
-            var response = await _httpClient.GetAsync($"{ _coreApiBaseAddress}/Accounts");
+            var response = await _httpClient.GetAsync($"{ _coreApiBaseAddress}/Job");
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                IEnumerable<Account> Accounts = JsonConvert.DeserializeObject<IEnumerable<Account>>(content);
+                IEnumerable<Job> Jobs = JsonConvert.DeserializeObject<IEnumerable<Job>>(content);
 
-                return Accounts;
+                return Jobs;
             }
 
             throw new HttpRequestException($"Invalid status code in the HttpResponseMessage: {response.StatusCode}.");
@@ -73,35 +73,35 @@ namespace CoreMVCClient.Services
 
 
 
-        public async Task<Account> GetAsync(string iban)
+        public async Task<Job> GetAsync(string iban)
         {
-            //api/Accounts/byIban?iban=12AS12432546789&withTransactions=true
-            //var response = await _httpClient.GetAsync($"{ _coreApiBaseAddress}/Accounts/{iban}");
-            var response = await _httpClient.GetAsync($"{ _coreApiBaseAddress}/Accounts/byIban?iban={iban}&withTransactions=true");
+            //api/Jobs/byIban?iban=12AS12432546789&withJobLogs=true
+            //var response = await _httpClient.GetAsync($"{ _coreApiBaseAddress}/Jobs/{iban}");
+            var response = await _httpClient.GetAsync($"{ _coreApiBaseAddress}/Jobs/byIban?iban={iban}&withJobLogs=true");
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                Account Account = JsonConvert.DeserializeObject<Account>(content);
+                Job Job = JsonConvert.DeserializeObject<Job>(content);
 
-                return Account;
+                return Job;
             }
 
             throw new HttpRequestException($"Invalid status code in the HttpResponseMessage: {response.StatusCode}.");
         }
 
-        public async Task<Account> AddAsync(Account account)
+        public async Task<Job> AddAsync(Job Job)
         {
 
-            var jsonRequest = JsonConvert.SerializeObject(account);
+            var jsonRequest = JsonConvert.SerializeObject(Job);
             var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            var response = await this._httpClient.PostAsync($"{ _coreApiBaseAddress}/Accounts", jsoncontent);
+            var response = await this._httpClient.PostAsync($"{ _coreApiBaseAddress}/Jobs", jsoncontent);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                account = JsonConvert.DeserializeObject<Account>(content);
+                Job = JsonConvert.DeserializeObject<Job>(content);
 
-                return account;
+                return Job;
             }
 
             throw new HttpRequestException($"Invalid status code in the HttpResponseMessage: {response.StatusCode}.");
@@ -110,7 +110,7 @@ namespace CoreMVCClient.Services
         public async Task DeleteAsync(string iban)
         {
 
-            var response = await _httpClient.DeleteAsync($"{ _coreApiBaseAddress}/Accounts/{iban}");
+            var response = await _httpClient.DeleteAsync($"{ _coreApiBaseAddress}/Jobs/{iban}");
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -120,19 +120,19 @@ namespace CoreMVCClient.Services
             throw new HttpRequestException($"Invalid status code in the HttpResponseMessage: {response.StatusCode}.");
         }
 
-        public async Task<Account> EditAsync(Account Account)
+        public async Task<Job> EditAsync(Job Job)
         {
 
-            var jsonRequest = JsonConvert.SerializeObject(Account);
+            var jsonRequest = JsonConvert.SerializeObject(Job);
             var jsoncontent = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
-            var response = await _httpClient.PutAsync($"{ _coreApiBaseAddress}/Accounts/{Account.Iban}", jsoncontent);
+            var response = await _httpClient.PutAsync($"{ _coreApiBaseAddress}/Jobs/{Job.JobId}", jsoncontent);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                Account = JsonConvert.DeserializeObject<Account>(content);
+                Job = JsonConvert.DeserializeObject<Job>(content);
 
-                return Account;
+                return Job;
             }
 
             throw new HttpRequestException($"Invalid status code in the HttpResponseMessage: {response.StatusCode}.");

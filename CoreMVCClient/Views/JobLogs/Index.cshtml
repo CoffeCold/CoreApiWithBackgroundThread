@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CoreAPI.Models.Transaction>
+﻿@model IEnumerable<CoreAPI.Models.JobLog>
 
 
 
@@ -17,19 +17,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.JobId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Date)
+                @Html.DisplayNameFor(model => model.Logdate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Amount)
+                @Html.DisplayNameFor(model => model.Logcomment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Counterparty)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountIban)
+                @Html.DisplayNameFor(model => model.LogId)
             </th>
             <th></th>
         </tr>
@@ -38,21 +35,18 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(modelItem => item.JobId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @Html.DisplayFor(modelItem => item.Logdate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Amount)
+                @Html.DisplayFor(modelItem => item.Logcomment)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Counterparty)
+                @Html.DisplayFor(modelItem => item.LogId)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountIban)
-            </td>
-            <td>
+             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })

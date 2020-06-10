@@ -63,26 +63,26 @@ namespace CoreAPI.Services
             return await Task.Run(() => JobSelectExcute(jobToRun)).ConfigureAwait(false);
         }
 
-        private Guid JobSelectExcute(Job jobToRun)
+        private async Task<Guid> JobSelectExcute(Job jobToRun)
         {
             _logger.LogInformation("JobSelection & execution {0} called", jobToRun.JobId);
             switch (jobToRun.ExecutionDomain)
             {
                 case ExecutionDomain.Batch:
                     {
-                        using (var scope = _serviceProvider.CreateScope())
+                        using (IServiceScope scope = _serviceProvider.CreateScope())
                         {
                             var batchService = scope.ServiceProvider.GetService<IBatchService>();
-                            batchService.ProcessBatch(jobToRun);
+                            await batchService.ProcessBatch(jobToRun);
                         }
                         break;
                     }
                 case ExecutionDomain.Bulk:
                     {
-                        using (var scope = _serviceProvider.CreateScope())
+                        using (IServiceScope scope = _serviceProvider.CreateScope())
                         {
                             var bulkService = scope.ServiceProvider.GetService<IBulkService>();
-                            bulkService.ProcessBulk(jobToRun);
+                            await bulkService.ProcessBulk(jobToRun);
                         }
                         break;
                     }

@@ -10,8 +10,6 @@ namespace CoreAPI.Models
 
     public class TransactionDBContext : DbContext
     {
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
 
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobLog> JobLogs { get; set; }
@@ -35,8 +33,6 @@ namespace CoreAPI.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Account>();
-            modelBuilder.Entity<Transaction>();
             modelBuilder.Entity<Job>();
             modelBuilder.Entity<JobLog>();
         }

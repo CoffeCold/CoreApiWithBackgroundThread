@@ -16,28 +16,39 @@ namespace CoreAPI.Services
     public class BulkService : IBulkService, IDisposable
     {
 
-        private readonly TransactionDBContext _transactionDBContext;
-        private readonly AppSettings _appSettings;
         private readonly ILogger<BulkService> _logger;
+        private readonly IJobManagementService _jobManagementService;
 
-
-        public BulkService(ILogger<BulkService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context)
+        public BulkService(ILogger<BulkService> logger, IJobManagementService jobManagementService)
         {
             _logger = logger;
-            _appSettings = appSettings.Value;
-            _transactionDBContext = context;
+            _jobManagementService = jobManagementService;
+
         }
 
- 
 
 
-        public void ProcessBulk(Job taskToRun)
+
+        public async Task ProcessBulk(Job bulkjob)
         {
-            _logger.LogInformation("ProcessBatch {0} called", taskToRun.JobId);
+            _logger.LogInformation("bulkjob {0} called", bulkjob.JobId);
+            bulkjob.StartDate = DateTime.Now;
+            bulkjob.JobState = JobState.Started;
+            if (await _jobManagementService.UpdateJob(bulkjob) == 0) return;
+            if (await _jobManagementService.EnterLog(bulkjob.JobId, String.Format("bulkjob {0} started", bulkjob.JobId)) == 0) return;
+
+            _logger.LogInformation("bulkjob {0} updated", bulkjob.JobId);
+            // do work
             Thread.Sleep(5000);
-            _logger.LogInformation("ProcessBatch {0} ended", taskToRun.JobId);
-            return;
+            _logger.LogInformation("bulkjob {0} ended", bulkjob.JobId);
+
+            bulkjob.StopDate = DateTime.Now;
+            bulkjob.JobState = JobState.Ended;
+            await _jobManagementService.UpdateJob(bulkjob);
+            await _jobManagementService.EnterLog(bulkjob.JobId, String.Format("bulkjob {0} stopped", bulkjob.JobId));
         }
+
+
 
 
         #region IDisposable Support

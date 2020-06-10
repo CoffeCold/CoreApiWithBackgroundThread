@@ -10,54 +10,53 @@ using CoreAPI.Models;
 
 namespace CoreMVCClient.Controllers
 {
-    public class AccountsController : Controller
+    public class JobsController : Controller
     {
 
-        private IAccountsService _accountsService;
+        private IJobsService _JobsService;
 
-        public AccountsController(IAccountsService accountsService)
+        public JobsController(IJobsService JobsService)
         {
-            _accountsService = accountsService;
+            _JobsService = JobsService;
         }
 
-        // GET: Accounts
+        // GET: Jobs
         public async Task<ActionResult> Index()
         {
-            return View(await _accountsService.GetAsync());
+            return View(await _JobsService.GetAsync());
         }
 
-        // GET: Accounts/Details/5
+        // GET: Jobs/Details/5
         public async Task<ActionResult> Details(string iban)
         {
-            Account account = await _accountsService.GetAsync(iban);
+            Job Job = await _JobsService.GetAsync(iban);
 
-            if (account == null)
+            if (Job == null)
             {
                 return NotFound();
             }
 
-            return View(account);
+            return View(Job);
 
         }
 
-        // GET: Accounts/Create
+        // GET: Jobs/Create
         public ActionResult Create()
         {
-            String newName = ((HttpContext.User?.Identity?.Name != null) ? HttpContext.User.Identity.Name : "");
-            Account account = new Account() { Name = HttpContext.User.Identity.Name };
-            return View(account);
+            Job Job = new Job() { };
+            return View(Job);
 
         }
 
-        // POST: Accounts/Create
+        // POST: Jobs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Iban,Name,City")] Account account)
+        public async Task<ActionResult> Create([Bind("JobId,Description,ExecutionDomain")] Job Job)
         {
             try
             {
                 // TODO: Add insert logic here
-                Account acc = await _accountsService.AddAsync(account);
+                Job acc = await _JobsService.AddAsync(Job);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -66,30 +65,30 @@ namespace CoreMVCClient.Controllers
             }
         }
 
-        // GET: Accounts/Edit/5
+        // GET: Jobs/Edit/5
         public async Task<ActionResult> Edit(string iban)
         {
-            Account account = await _accountsService.GetAsync(iban);
+            Job Job = await _JobsService.GetAsync(iban);
 
-            if (account == null)
+            if (Job == null)
             {
                 return NotFound();
             }
 
-            return View(account);
+            return View(Job);
 
         }
 
-        // POST: Accounts/Edit/5
-        [HttpPost]
+        // POST: Jobs/Edit/5
+        [HttpPost("{jobid:guid}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(string iban, [Bind("Iban,Name,City")] Account account)
+        public async Task<ActionResult> Edit(Guid jobid, [Bind("JobId,Description,ExecutionDomain")] Job Job)
         {
             try
             {
-                if (iban == account.Iban)
+                if (jobid == Job.JobId)
                 {
-                    await _accountsService.EditAsync(account);
+                    await _JobsService.EditAsync(Job);
                     return RedirectToAction(nameof(Index));
                 }
                 return View();
@@ -100,30 +99,30 @@ namespace CoreMVCClient.Controllers
             }
         }
 
-        // GET: Accounts/Delete/5
+        // GET: Jobs/Delete/5
         public async Task<ActionResult> Delete(string iban)
         {
-            Account account = await this._accountsService.GetAsync(iban);
+            Job Job = await this._JobsService.GetAsync(iban);
 
-            if (account == null)
+            if (Job == null)
             {
                 return NotFound();
             }
 
-            return View(account);
+            return View(Job);
 
         }
 
-        // POST: Accounts/Delete/5
+        // POST: Jobs/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(string iban, [Bind("Iban,Name,City")] Account account)
+        public async Task<ActionResult> Delete(string iban, [Bind("JobId,Description,ExecutionDomain")] Job Job)
         {
             try
             {
                 // TODO: Add delete logic here
 
-                await _accountsService.DeleteAsync(iban);
+                await _JobsService.DeleteAsync(iban);
                 return RedirectToAction(nameof(Index));
             }
             catch

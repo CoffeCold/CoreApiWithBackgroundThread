@@ -19,35 +19,47 @@ namespace CoreAPI.Services
     public class BatchService : IBatchService, IDisposable
     {
 
-        private readonly TransactionDBContext _transactionDBContext;
-        private readonly AppSettings _appSettings;
         private readonly ILogger<BatchService> _logger;
-        private readonly JobsToRun _tasks;
+        private readonly IJobManagementService _jobManagementService;
 
-
-        public BatchService(ILogger<BatchService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context, JobsToRun tasks)
+        public BatchService(ILogger<BatchService> logger, IJobManagementService jobManagementService )
         {
             _logger = logger;
-            _appSettings = appSettings.Value;
-            _transactionDBContext = context;
-            _tasks = tasks;
+            _jobManagementService = jobManagementService;
         }
+        
 
- 
-        public async Task<Job> StartBatch(Job settings)
+
+
+
+
+        public async Task ProcessBatch(Job batchjob)
         {
-             _tasks.Enqueue(settings);
-            return await Task.FromResult(settings); 
+            _logger.LogInformation("batchjob {0} called", batchjob.JobId);
+            batchjob.StartDate = DateTime.Now;
+            batchjob.JobState = JobState.Started;
+            if (await _jobManagementService.UpdateJob(batchjob) == 0) return;
+            if (await _jobManagementService.EnterLog(batchjob.JobId,  String.Format("batchjob {0} started", batchjob.JobId)) == 0) return;
 
-        }
-
-
-        public void ProcessBatch(Job taskToRun)
-        {
-            _logger.LogInformation("ProcessBatch {0} called", taskToRun.JobId);
+            _logger.LogInformation("batchjob {0} updated", batchjob.JobId);
+            // do work
             Thread.Sleep(5000);
-            _logger.LogInformation("ProcessBatch {0} ended", taskToRun.JobId);
-            return ;
+            await _jobManagementService.EnterLog(batchjob.JobId, String.Format("batchjob {0} phase2", batchjob.JobId));
+            // do work
+            Thread.Sleep(5000);
+            await _jobManagementService.EnterLog(batchjob.JobId, String.Format("batchjob {0} phase 3", batchjob.JobId));
+            // do work
+            Thread.Sleep(5000);
+            await _jobManagementService.EnterLog(batchjob.JobId, String.Format("batchjob {0} phase 4", batchjob.JobId));
+            // do work
+            Thread.Sleep(5000);
+            _logger.LogInformation("batchjob {0} ended", batchjob.JobId);
+
+            batchjob.StopDate = DateTime.Now;
+            batchjob.JobState = JobState.Ended;
+            await _jobManagementService.UpdateJob(batchjob);
+            await _jobManagementService.EnterLog(batchjob.JobId, String.Format("batchjob {0} stopped", batchjob.JobId));
+
         }
 
 

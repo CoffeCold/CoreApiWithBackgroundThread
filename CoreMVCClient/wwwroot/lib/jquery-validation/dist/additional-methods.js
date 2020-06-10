@@ -90,12 +90,12 @@ $.validator.addMethod( "alphanumeric", function( value, element ) {
 }, "Letters, numbers, and underscores only please" );
 
 /*
- * Dutch bank account numbers (not 'giro' numbers) have 9 digits
+ * Dutch bank Job numbers (not 'giro' numbers) have 9 digits
  * and pass the '11 check'.
  * We accept the notation with spaces, as that is common.
  * acceptable: 123456789 or 12 34 56 789
  */
-$.validator.addMethod( "bankaccountNL", function( value, element ) {
+$.validator.addMethod( "bankJobNL", function( value, element ) {
 	if ( this.optional( element ) ) {
 		return true;
 	}
@@ -104,23 +104,23 @@ $.validator.addMethod( "bankaccountNL", function( value, element ) {
 	}
 
 	// Now '11 check'
-	var account = value.replace( / /g, "" ), // Remove spaces
+	var Job = value.replace( / /g, "" ), // Remove spaces
 		sum = 0,
-		len = account.length,
+		len = Job.length,
 		pos, factor, digit;
 	for ( pos = 0; pos < len; pos++ ) {
 		factor = len - pos;
-		digit = account.substring( pos, pos + 1 );
+		digit = Job.substring( pos, pos + 1 );
 		sum = sum + factor * digit;
 	}
 	return sum % 11 === 0;
-}, "Please specify a valid bank account number" );
+}, "Please specify a valid bank Job number" );
 
-$.validator.addMethod( "bankorgiroaccountNL", function( value, element ) {
+$.validator.addMethod( "bankorgiroJobNL", function( value, element ) {
 	return this.optional( element ) ||
-			( $.validator.methods.bankaccountNL.call( this, value, element ) ) ||
-			( $.validator.methods.giroaccountNL.call( this, value, element ) );
-}, "Please specify a valid bank or giro account number" );
+			( $.validator.methods.bankJobNL.call( this, value, element ) ) ||
+			( $.validator.methods.giroJobNL.call( this, value, element ) );
+}, "Please specify a valid bank or giro Job number" );
 
 /**
  * BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.
@@ -525,14 +525,14 @@ $.validator.addMethod( "extension", function( value, element, param ) {
 }, $.validator.format( "Please enter a value with a valid extension." ) );
 
 /**
- * Dutch giro account numbers (not bank numbers) have max 7 digits
+ * Dutch giro Job numbers (not bank numbers) have max 7 digits
  */
-$.validator.addMethod( "giroaccountNL", function( value, element ) {
+$.validator.addMethod( "giroJobNL", function( value, element ) {
 	return this.optional( element ) || /^[0-9]{1,7}$/.test( value );
-}, "Please specify a valid giro account number" );
+}, "Please specify a valid giro Job number" );
 
 /**
- * IBAN is the international bank account number.
+ * IBAN is the international bank Job number.
  * It has a country - specific format, that is checked here too
  *
  * Validation is case-insensitive. Please make sure to normalize input yourself.
@@ -556,7 +556,7 @@ $.validator.addMethod( "iban", function( value, element ) {
 	// It contains:
 	// country code ISO 3166-1 - two letters,
 	// two check digits,
-	// Basic Bank Account Number (BBAN) - up to 30 chars
+	// Basic Bank Job Number (BBAN) - up to 30 chars
 	var minimalIBANlength = 5;
 	if ( iban.length < minimalIBANlength ) {
 		return false;

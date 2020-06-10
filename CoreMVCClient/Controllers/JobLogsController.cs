@@ -9,34 +9,34 @@ using CoreAPI.Models;
 
 namespace CoreMVCClient.Controllers
 {
-    public class TransactionsController : Controller
+    public class JobLogsController : Controller
     {
-        private ITransactionsService _transactionsService;
+        private readonly IJobLogsService _JobLogsService;
 
-        public TransactionsController(ITransactionsService transactionService)
+        public JobLogsController(IJobLogsService JobLogservice)
         {
-            _transactionsService = transactionService;
+            _JobLogsService = JobLogservice;
         }
 
-        // GET: Transactions
+        // GET: JobLogs
         public async Task<ActionResult> Index()
         {
-            return View(await _transactionsService.GetAsync());
+            return View(await _JobLogsService.GetAsync());
         }
 
-        // GET: Transactions/Details/5
-        public ActionResult Details(int id)
+        // GET: JobLogs/Details/5
+        public ActionResult Details(Guid LogId)
         {
             return View();
         }
 
-        // GET: Transactions/Create
+        // GET: JobLogs/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Transactions/Create
+        // POST: JobLogs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -53,13 +53,13 @@ namespace CoreMVCClient.Controllers
             }
         }
 
-        // GET: Transactions/Edit/5
+        // GET: JobLogs/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Transactions/Edit/5
+        // POST: JobLogs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -76,13 +76,13 @@ namespace CoreMVCClient.Controllers
             }
         }
 
-        // GET: Transactions/Delete/5
+        // GET: JobLogs/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Transactions/Delete/5
+        // POST: JobLogs/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

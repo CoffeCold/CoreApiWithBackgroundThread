@@ -16,12 +16,10 @@ namespace CoreAPI.Controllers
     public class BatchController : ControllerBase
     {
         private readonly ILogger<BatchController> _logger;
-        private readonly IBatchService _batchService;
         private readonly IJobManagementService _jobManagementService; 
-        public BatchController( ILogger<BatchController> logger, IBatchService batchService, IJobManagementService jobAdministrationService)
+        public BatchController( ILogger<BatchController> logger, IJobManagementService jobAdministrationService)
         {
             _logger = logger;
-            _batchService = batchService;
             _jobManagementService = jobAdministrationService;
         }
 
@@ -29,7 +27,7 @@ namespace CoreAPI.Controllers
         [HttpGet("state/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<JobState>> GetState(Guid id)
+        public async Task<ActionResult<Job>> GetState(Guid id)
         {
             Job job = await _jobManagementService.GetState(id);
             if (job == null)

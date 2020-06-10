@@ -9,11 +9,11 @@ namespace CoreAPI.Services
 
     public interface IBatchService 
     {
-        void ProcessBatch(Job jobToRun);
+        Task ProcessBatch(Job jobToRun);
     }
     public interface IBulkService 
     {
-        void ProcessBulk(Job jobToRun);
+        Task ProcessBulk(Job jobToRun);
 
 
     }
@@ -22,7 +22,9 @@ namespace CoreAPI.Services
         Task<Job> GetState(Guid id);
         Task<IEnumerable<JobLog>> GetLogs(JobQuery jobQuery);
         Task<Job> ScheduleJob(Job jobSettings);
-
+        Task<IEnumerable<Job>> GetAll();
+        Task<int> UpdateJob(Job job);
+        Task<int> EnterLog(Guid jobid, String logtext);
 
     }
 

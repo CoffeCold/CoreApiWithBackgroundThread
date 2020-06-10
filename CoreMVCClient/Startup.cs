@@ -26,8 +26,8 @@ namespace CoreMVCClient
         {
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
-            services.AddAccountsService(Configuration);
-            services.AddTransactionsService(Configuration);
+            services.AddJobsService(Configuration);
+            services.AddJobLogsService(Configuration);
 
         }
 

@@ -1,0 +1,111 @@
+﻿@model CoreAPI.Models.Job
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+
+    <div>
+        <h4>Job</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.JobId)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.JobId)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ExecutionDomain)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ExecutionDomain)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ScheduleDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ScheduleDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.StopDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StopDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.JobState)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.JobState)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.JobProperty1)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.JobProperty1)
+            </dd>
+        </dl>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobLogs.First().LogId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobLogs.First().Logdate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.JobLogs.First().Logcomment)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.JobLogs)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LogId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Logdate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Logcomment)
+                </td>
+                @*<td>
+            @Html.ActionLink("Edit", "Edit", new { iban = item.Iban }) |
+            @Html.ActionLink("Details", "Details", new { iban = item.Iban }) |
+            @Html.ActionLink("Delete", "Delete", new { iban = item.Iban })
+        </td>*@
+            </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        @Html.ActionLink("Edit", "Edit", new { iban = Model.JobId }) |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</body>
+</html>

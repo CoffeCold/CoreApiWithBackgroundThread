@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Account.cs" />
-    <Compile Remove="Models\Transaction.cs" />
+    <Compile Remove="Models\Job.cs" />
+    <Compile Remove="Models\Log.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\CoreAPITemplate\Models\DBContextModels\Account.cs" Link="Models\Account.cs" />
-    <Compile Include="..\CoreAPITemplate\Models\DBContextModels\Transaction.cs" Link="Models\Transaction.cs" />
+    <Compile Include="..\CoreAPITemplate\Models\DBContextModels\Job.cs" Link="Models\Job.cs" />
+    <Compile Include="..\CoreAPITemplate\Models\DBContextModels\JobLog.cs" Link="Models\JobLog.cs" />
   </ItemGroup>
 
   <ItemGroup>
