@@ -35,7 +35,7 @@ Get the opened client browser to see the system
 ## remarks
 This system is build on a template of a database api/asp.net MVC client
 
-###Parts not finished:
+###Parts not finished :
 
 ```
 - background task processing system : Asked is to start a task (configured) in a background pool and return the controller call 
@@ -45,9 +45,8 @@ The idea is that task are started in a queue and that after start it returns
 ```
 ###Architecture
 ```
-Domain layers : Batch, bulk
+Domain layers : Batch, bulk, jobmanagement
 Vertical : Controllers -> Services - > Contexts (Models)
-Service : two methods Check and GetLogs are common for both serivices : they reside under one base interface
 Scalability by background pool of tasks
 ```
 
@@ -62,8 +61,15 @@ Postman test
 
 ```
 To run Batch tasks (fire and forget ):
-POST api/Batch Body : {"id":1,"description":"abc"}
-outcome : all tasks will be excuted one by one.
+POST api/batch Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
+POST api/job Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
+
+To run Bulk tasks (fire and forget ):
+POST api/bulk Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
+POST api/job Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
+
+
+outcome : all tasks will be excuted one by one. Refresh the client
 ```
 
 ### And coding style tests
