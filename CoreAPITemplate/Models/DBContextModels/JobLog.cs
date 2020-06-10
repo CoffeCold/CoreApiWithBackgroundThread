@@ -17,6 +17,6 @@ namespace CoreAPI.Models
         //Foreign key for Job
         [ForeignKey("JobSettings")]
         public Guid JobId { get; set; }
-        public JobSettings Job { get; set; }
+        public Job Job { get; set; }
     }
 }

@@ -16,8 +16,8 @@ namespace CoreAPI.Controllers
     public class BatchController : ControllerBase
     {
         private readonly ILogger<BatchController> _logger;
-        private IBatchService _batchService;
-        private IJobManagementService _jobManagementService; 
+        private readonly IBatchService _batchService;
+        private readonly IJobManagementService _jobManagementService; 
         public BatchController( ILogger<BatchController> logger, IBatchService batchService, IJobManagementService jobAdministrationService)
         {
             _logger = logger;
@@ -31,13 +31,12 @@ namespace CoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<JobState>> GetState(Guid id)
         {
-            JobSettings ts = new JobSettings() { JobId = id };
-            JobState state = await _jobManagementService.GetState(ts);
-            if (state == null)
+            Job job = await _jobManagementService.GetState(id);
+            if (job == null)
             {
                 return NotFound();
             }
-            return Ok(state);
+            return Ok(job);
         }
 
         // GET: api/Batch/logs/69562d2a-6b52-47a4-8089-203efa02a3f0
@@ -46,8 +45,9 @@ namespace CoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<JobLog>>> GetLogs(Guid id)
         {
-            JobSettings ts = new JobSettings() { JobId = id };
-            var logs = await _jobManagementService.GetLogs(ts);
+            //TODO extend with other properties
+            JobQuery jobQuery = new JobQuery() { JobId = id };
+            var logs = await _jobManagementService.GetLogs(jobQuery);
             if (logs == null)
             {
                 return NotFound();
@@ -60,14 +60,14 @@ namespace CoreAPI.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<JobSettings>> Entertask(JobSettings taskset)
+        public async Task<ActionResult<Job>> Entertask(Job taskset)
         {
             _logger.LogInformation("task entered {0}", taskset.JobId);
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (taskset.JobId != new Guid()) return BadRequest(ModelState);
 
-            JobSettings jobSettings = await _jobManagementService.ScheduleJob(taskset);
+            Job jobSettings = await _jobManagementService.ScheduleJob(taskset);
             if (jobSettings != null)
             {
                 return Ok(jobSettings);

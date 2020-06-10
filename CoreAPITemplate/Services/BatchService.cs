@@ -19,7 +19,7 @@ namespace CoreAPI.Services
     public class BatchService : IBatchService, IDisposable
     {
 
-        private TransactionDBContext _transactionDBContext;
+        private readonly TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<BatchService> _logger;
         private readonly JobsToRun _tasks;
@@ -34,7 +34,7 @@ namespace CoreAPI.Services
         }
 
  
-        public async Task<JobSettings> StartBatch(JobSettings settings)
+        public async Task<Job> StartBatch(Job settings)
         {
              _tasks.Enqueue(settings);
             return await Task.FromResult(settings); 
@@ -42,7 +42,7 @@ namespace CoreAPI.Services
         }
 
 
-        public void ProcessBatch(JobSettings taskToRun)
+        public void ProcessBatch(Job taskToRun)
         {
             _logger.LogInformation("ProcessBatch {0} called", taskToRun.JobId);
             Thread.Sleep(5000);

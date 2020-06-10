@@ -27,7 +27,7 @@ namespace CoreAPI.Services
     public class AccountService : IAccountService, IDisposable
     {
 
-        private TransactionDBContext _transactionDBContext;
+        private readonly TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<AccountService> _logger;
 

@@ -10,21 +10,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoreAPI.Models
 {
-    //[JsonConverter(typeof(StringEnumConverter))]
     public enum ExecutionDomain { Bulk, Batch}
 
-    public class JobSettings
+    public enum JobState { Scheduled, Started, Pauzed, Aborted, Ended }
+
+    public class Job
     {
         [Key]
         public Guid JobId { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ExecutionDomain ExecutionDomain { get; set; }
+        public DateTime ScheduleDate { get; set; }
+        public DateTime StartDate { get; set; }
+
+        public DateTime StopDate { get; set; }
+
         public string JobProperty1 { get; set; }
 
         public string Description { get; set; }
 
         public ICollection<JobLog> Logs { get; set; }
-        public ICollection<JobState> States { get; set; }
     }
 }

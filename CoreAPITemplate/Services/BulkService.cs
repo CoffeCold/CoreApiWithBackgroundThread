@@ -16,7 +16,7 @@ namespace CoreAPI.Services
     public class BulkService : IBulkService, IDisposable
     {
 
-        private TransactionDBContext _transactionDBContext;
+        private readonly TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<BulkService> _logger;
 
@@ -31,7 +31,7 @@ namespace CoreAPI.Services
  
 
 
-        public void ProcessBulk(JobSettings taskToRun)
+        public void ProcessBulk(Job taskToRun)
         {
             _logger.LogInformation("ProcessBatch {0} called", taskToRun.JobId);
             Thread.Sleep(5000);

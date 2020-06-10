@@ -9,19 +9,19 @@ namespace CoreAPI.Services
 
     public interface IBatchService 
     {
-        void ProcessBatch(JobSettings jobToRun);
+        void ProcessBatch(Job jobToRun);
     }
     public interface IBulkService 
     {
-        void ProcessBulk(JobSettings jobToRun);
+        void ProcessBulk(Job jobToRun);
 
 
     }
     public interface IJobManagementService
     {
-        Task<JobState> GetState(JobSettings jobSettings);
-        Task<IEnumerable<JobLog>> GetLogs(JobSettings jobSettings);
-        Task<JobSettings> ScheduleJob(JobSettings jobSettings);
+        Task<Job> GetState(Guid id);
+        Task<IEnumerable<JobLog>> GetLogs(JobQuery jobQuery);
+        Task<Job> ScheduleJob(Job jobSettings);
 
 
     }

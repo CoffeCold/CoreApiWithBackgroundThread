@@ -10,19 +10,19 @@ namespace CoreAPI.Helpers
 {
     public class JobsToRun
     {
-        private readonly BlockingCollection<JobSettings> _tasks;
+        private readonly BlockingCollection<Job> _tasks;
 
         public JobsToRun()
         {
-            _tasks = new BlockingCollection<JobSettings>();
+            _tasks = new BlockingCollection<Job>();
         }
-        public Guid Enqueue(JobSettings settings)
+        public Guid Enqueue(Job settings)
         {
             _tasks.Add(settings);
             return settings.JobId; 
         }
 
-        public JobSettings Dequeue(CancellationToken token)
+        public Job Dequeue(CancellationToken token)
         {
             if (_tasks.Any())
             {

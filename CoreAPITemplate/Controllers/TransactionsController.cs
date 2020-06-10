@@ -17,7 +17,7 @@ namespace CoreAPI.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly ILogger<TransactionsController> _logger;
-        private ITransactionsService _transactionsService;
+        private readonly ITransactionsService _transactionsService;
 
         public TransactionsController(ILogger<TransactionsController> logger, ITransactionsService transactionsService)
         {

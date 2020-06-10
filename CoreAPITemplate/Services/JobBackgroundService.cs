@@ -18,7 +18,7 @@ namespace CoreAPI.Services
     {
         private readonly JobsToRun _jobs;
         private readonly ILogger<BatchService> _logger;
-        private IServiceProvider _serviceProvider; 
+        private readonly IServiceProvider _serviceProvider; 
         private CancellationTokenSource _tokenSource;
 
         private Task _currentTask;
@@ -39,7 +39,7 @@ namespace CoreAPI.Services
                 {
                     await Task.Delay(TimeSpan.FromSeconds(3), cancellationToken).ConfigureAwait(false);
 
-                    JobSettings taskToRun = _jobs.Dequeue(_tokenSource.Token);
+                    Job taskToRun = _jobs.Dequeue(_tokenSource.Token);
                     if (taskToRun != null)
                     {
                         //// We need to save executable task, 
@@ -57,13 +57,13 @@ namespace CoreAPI.Services
         }
 
 
-        private async Task<Guid> ExecuteJob(JobSettings jobToRun)
+        private async Task<Guid> ExecuteJob(Job jobToRun)
         {
             _logger.LogInformation("ExecuteTask {0} called", jobToRun.JobId);
             return await Task.Run(() => JobSelectExcute(jobToRun)).ConfigureAwait(false);
         }
 
-        private Guid JobSelectExcute(JobSettings jobToRun)
+        private Guid JobSelectExcute(Job jobToRun)
         {
             _logger.LogInformation("JobSelection & execution {0} called", jobToRun.JobId);
             switch (jobToRun.ExecutionDomain)

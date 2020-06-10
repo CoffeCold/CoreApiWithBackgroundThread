@@ -12,7 +12,7 @@ namespace CoreAPI.Services
 {
     public class JobManagementService : IJobManagementService
     {
-        private TransactionDBContext _transactionDBContext;
+        private readonly TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<JobManagementService> _logger;
         private readonly JobsToRun _jobs;
@@ -24,12 +24,14 @@ namespace CoreAPI.Services
             _transactionDBContext = context;
             _jobs = jobs;
         }
-        public async Task<IEnumerable<JobLog>> GetLogs(JobSettings jobSettings)
+        public async Task<IEnumerable<JobLog>> GetLogs(JobQuery jobSettings)
         {
-            // stub for time being
-            var list = new List<JobLog>();
-            list.Add(new JobLog() { LogId = Guid.NewGuid(), Logcomment = "abc", Logdate = DateTime.Now });
-            list.Add(new JobLog() { LogId = Guid.NewGuid(), Logcomment = "abc", Logdate = DateTime.Now });
+            //TODO get logs from database
+            var list = new List<JobLog>
+            {
+                new JobLog() { LogId = Guid.NewGuid(), Logcomment = "abc", Logdate = DateTime.Now },
+                new JobLog() { LogId = Guid.NewGuid(), Logcomment = "abc", Logdate = DateTime.Now }
+            };
             return await Task.FromResult(list);
             //return await _transactionDBContext.ProcessLogs.Where(p => p.Id == taskSettings.Id).ToListAsync();
         }
@@ -38,17 +40,18 @@ namespace CoreAPI.Services
         //{
         //    return await _transactionDBContext.ProcessLogs.Where(p => p.Id == taskSettings.Id).ToListAsync();
         //}
-        public async Task<JobState> GetState(JobSettings jobSettings)
+        public async Task<Job> GetState(Guid jobId)
         {
-            JobState ps = new JobState() { StateID = jobSettings.JobId, Logdate = DateTime.Now, State = "abc" };
+            //TODO get job from database
+            Job ps = new Job() {  JobId = jobId };
             return await Task.FromResult(ps);
         }
 
-        public async Task<JobSettings> ScheduleJob(JobSettings settings)
+        public async Task<Job> ScheduleJob(Job settings)
         {
             settings.JobId = Guid.NewGuid();
             _jobs.Enqueue(settings);
-            _transactionDBContext.JobSettings.Add(settings);
+            _transactionDBContext.Jobs.Add(settings);
             if (await _transactionDBContext.SaveChangesAsync() > 0)
             {
                 return await Task.FromResult(settings);

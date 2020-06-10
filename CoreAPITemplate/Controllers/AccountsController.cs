@@ -13,7 +13,7 @@ namespace CoreAPI.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private IAccountService _accountService;
+        private readonly IAccountService _accountService;
 
         private readonly ILogger<AccountsController> _logger;
 
@@ -43,7 +43,7 @@ namespace CoreAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Account>> GetAccount(string iban, Boolean withTransactions)
         {
-            Account account = null;
+            Account account ;
             if (withTransactions)
             {
                 account = await _accountService.GetOneByIbanWithTransactions(iban);
