@@ -15,14 +15,14 @@ namespace CoreAPI.Services
         private TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<JobManagementService> _logger;
-        private readonly TasksToRun _tasks;
+        private readonly JobsToRun _jobs;
 
-        public JobManagementService(ILogger<JobManagementService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context, TasksToRun tasks)
+        public JobManagementService(ILogger<JobManagementService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context, JobsToRun jobs)
         {
             _logger = logger;
             _appSettings = appSettings.Value;
             _transactionDBContext = context;
-            _tasks = tasks;
+            _jobs = jobs;
         }
         public async Task<IEnumerable<JobLog>> GetLogs(JobSettings jobSettings)
         {
@@ -47,7 +47,7 @@ namespace CoreAPI.Services
         public async Task<JobSettings> ScheduleJob(JobSettings settings)
         {
             settings.JobId = Guid.NewGuid();
-            _tasks.Enqueue(settings);
+            _jobs.Enqueue(settings);
             _transactionDBContext.JobSettings.Add(settings);
             if (await _transactionDBContext.SaveChangesAsync() > 0)
             {

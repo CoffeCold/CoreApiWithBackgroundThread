@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CoreAPI.Models
 {
     //[JsonConverter(typeof(StringEnumConverter))]
-    public enum ExecutionDomainEn { Bulk, Batch}
+    public enum ExecutionDomain { Bulk, Batch}
 
     public class JobSettings
     {
@@ -19,7 +19,7 @@ namespace CoreAPI.Models
         public Guid JobId { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public ExecutionDomainEn ExecutionDomain { get; set; }
+        public ExecutionDomain ExecutionDomain { get; set; }
         public string JobProperty1 { get; set; }
 
         public string Description { get; set; }

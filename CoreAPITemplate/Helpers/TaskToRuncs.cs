@@ -8,11 +8,11 @@ using CoreAPI.Models;
 
 namespace CoreAPI.Helpers
 {
-    public class TasksToRun
+    public class JobsToRun
     {
         private readonly BlockingCollection<JobSettings> _tasks;
 
-        public TasksToRun()
+        public JobsToRun()
         {
             _tasks = new BlockingCollection<JobSettings>();
         }

@@ -22,10 +22,10 @@ namespace CoreAPI.Services
         private TransactionDBContext _transactionDBContext;
         private readonly AppSettings _appSettings;
         private readonly ILogger<BatchService> _logger;
-        private readonly TasksToRun _tasks;
+        private readonly JobsToRun _tasks;
 
 
-        public BatchService(ILogger<BatchService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context, TasksToRun tasks)
+        public BatchService(ILogger<BatchService> logger, IOptions<AppSettings> appSettings, TransactionDBContext context, JobsToRun tasks)
         {
             _logger = logger;
             _appSettings = appSettings.Value;

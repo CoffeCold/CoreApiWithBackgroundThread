@@ -18,14 +18,14 @@ namespace CoreAPI.Controllers
         private readonly ILogger<BulkController> _logger;
         private IBulkService _bulkService;
         private IJobManagementService _jobManagementService;
-        public BulkController(TasksToRun tasks, ILogger<BulkController> logger, IBulkService bulkService, IJobManagementService jobManagementService)
+        public BulkController(JobsToRun tasks, ILogger<BulkController> logger, IBulkService bulkService, IJobManagementService jobManagementService)
         {
             _logger = logger;
             _bulkService = bulkService;
             _jobManagementService = jobManagementService;
         }
 
-        // GET: api/Bulk/State/2432546789
+        // GET: api/Bulk/state/69562d2a-6b52-47a4-8089-203efa02a3f0
         [HttpGet("state/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,7 +40,7 @@ namespace CoreAPI.Controllers
             return Ok(state);
         }
 
-        // GET: api/Bulk/Logs?Taskid=12432546789
+        // GET: api/Bulk/logs/69562d2a-6b52-47a4-8089-203efa02a3f0
         [HttpGet("logs/{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -55,7 +55,8 @@ namespace CoreAPI.Controllers
             return Ok(logs);
         }
 
-        // Post: api/Bulk
+        // Post: api/bulk
+        // Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

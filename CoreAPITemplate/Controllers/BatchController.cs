@@ -17,12 +17,12 @@ namespace CoreAPI.Controllers
     {
         private readonly ILogger<BatchController> _logger;
         private IBatchService _batchService;
-        private IJobManagementService _jobAdministrationService; 
+        private IJobManagementService _jobManagementService; 
         public BatchController( ILogger<BatchController> logger, IBatchService batchService, IJobManagementService jobAdministrationService)
         {
             _logger = logger;
             _batchService = batchService;
-            _jobAdministrationService = jobAdministrationService;
+            _jobManagementService = jobAdministrationService;
         }
 
         // GET: api/Batch/state/69562d2a-6b52-47a4-8089-203efa02a3f0
@@ -32,7 +32,7 @@ namespace CoreAPI.Controllers
         public async Task<ActionResult<JobState>> GetState(Guid id)
         {
             JobSettings ts = new JobSettings() { JobId = id };
-            JobState state = await _jobAdministrationService.GetState(ts);
+            JobState state = await _jobManagementService.GetState(ts);
             if (state == null)
             {
                 return NotFound();
@@ -47,7 +47,7 @@ namespace CoreAPI.Controllers
         public async Task<ActionResult<IEnumerable<JobLog>>> GetLogs(Guid id)
         {
             JobSettings ts = new JobSettings() { JobId = id };
-            var logs = await _jobAdministrationService.GetLogs(ts);
+            var logs = await _jobManagementService.GetLogs(ts);
             if (logs == null)
             {
                 return NotFound();
@@ -56,6 +56,7 @@ namespace CoreAPI.Controllers
         }
 
         // Post: api/Batch
+        // Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +67,7 @@ namespace CoreAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (taskset.JobId != new Guid()) return BadRequest(ModelState);
 
-            JobSettings jobSettings = await _jobAdministrationService.ScheduleJob(taskset);
+            JobSettings jobSettings = await _jobManagementService.ScheduleJob(taskset);
             if (jobSettings != null)
             {
                 return Ok(jobSettings);

@@ -14,18 +14,18 @@ namespace CoreAPI.Services
 
   
 
-    public class MyBackgroundService : BackgroundService
+    public class JobBackgroundService : BackgroundService
     {
-        private readonly TasksToRun _tasks;
+        private readonly JobsToRun _jobs;
         private readonly ILogger<BatchService> _logger;
         private IServiceProvider _serviceProvider; 
         private CancellationTokenSource _tokenSource;
 
         private Task _currentTask;
 
-        public MyBackgroundService(ILogger<BatchService> logger, TasksToRun tasks, IServiceProvider serviceProvider)
+        public JobBackgroundService(ILogger<BatchService> logger, JobsToRun jobs, IServiceProvider serviceProvider)
         {
-            _tasks = tasks;
+            _jobs = jobs;
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
@@ -39,12 +39,12 @@ namespace CoreAPI.Services
                 {
                     await Task.Delay(TimeSpan.FromSeconds(3), cancellationToken).ConfigureAwait(false);
 
-                    JobSettings taskToRun = _tasks.Dequeue(_tokenSource.Token);
+                    JobSettings taskToRun = _jobs.Dequeue(_tokenSource.Token);
                     if (taskToRun != null)
                     {
                         //// We need to save executable task, 
                         //// so we can gratefully wait for it's completion in Stop method
-                        _currentTask = ExecuteTask(taskToRun);
+                        _currentTask = ExecuteJob(taskToRun);
                         await _currentTask;
                     }
                 }
@@ -57,22 +57,39 @@ namespace CoreAPI.Services
         }
 
 
-        private async Task<Guid> ExecuteTask(JobSettings taskToRun)
+        private async Task<Guid> ExecuteJob(JobSettings jobToRun)
         {
-            _logger.LogInformation("ExecuteTask {0} called", taskToRun.JobId);
-            return await Task.Run(() => SomeMethodAsync(taskToRun)).ConfigureAwait(false);
+            _logger.LogInformation("ExecuteTask {0} called", jobToRun.JobId);
+            return await Task.Run(() => JobSelectExcute(jobToRun)).ConfigureAwait(false);
         }
 
-        private Guid SomeMethodAsync(JobSettings taskToRun)
+        private Guid JobSelectExcute(JobSettings jobToRun)
         {
-            _logger.LogInformation("SomeMethodAsync {0} called", taskToRun.JobId);
-            using (var scope = _serviceProvider.CreateScope())
+            _logger.LogInformation("JobSelection & execution {0} called", jobToRun.JobId);
+            switch (jobToRun.ExecutionDomain)
             {
-                var xService = scope.ServiceProvider.GetService<IBatchService>();
-                xService.ProcessBatch(taskToRun);
+                case ExecutionDomain.Batch:
+                    {
+                        using (var scope = _serviceProvider.CreateScope())
+                        {
+                            var batchService = scope.ServiceProvider.GetService<IBatchService>();
+                            batchService.ProcessBatch(jobToRun);
+                        }
+                        break;
+                    }
+                case ExecutionDomain.Bulk:
+                    {
+                        using (var scope = _serviceProvider.CreateScope())
+                        {
+                            var bulkService = scope.ServiceProvider.GetService<IBulkService>();
+                            bulkService.ProcessBulk(jobToRun);
+                        }
+                        break;
+                    }
             }
-            _logger.LogInformation("SomeMethodAsync {0} ended", taskToRun.JobId);
-            return taskToRun.JobId; 
+ 
+            _logger.LogInformation("JobSelection & execution job {0} ended", jobToRun.JobId);
+            return jobToRun.JobId; 
 
         }
 
