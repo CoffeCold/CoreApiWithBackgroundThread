@@ -11,17 +11,17 @@ using Xunit;
 using CoreAPI.Controllers;
 using CoreAPI.Services;
 using CoreAPI.Models;
-using CoreAPI.Helpers;
+using CoreAPI.ConfigurationSettings;
 
 namespace CoreXUnitTest
 {
     public class UnitTestBatchController
     {
-        private ILogger<BatchController> _BatchControllerLogger;
+        private ILogger<JobController> _JobControllerLogger;
         private ILogger<JobManagementService> _JobManagementServiceLogger;
         private IJobManagementService _JobManagementService;
         private IOptions<AppSettings> _appSettings;
-        private TransactionDBContext _transactionDBContext;
+        private JobManagementDBContext _jobmanagemenDBContext;
 
  
 
@@ -30,7 +30,7 @@ namespace CoreXUnitTest
         {
             // Arrange
             GetInjections();
-            var batchcontroller = new BatchController(_BatchControllerLogger, _JobManagementService);
+            var batchcontroller = new JobController(_JobControllerLogger, _JobManagementService);
 
             // Act
             var actionresult = await batchcontroller.Entertask(new Job() {  Description = "foo", JobProperty1 = "bar"});
@@ -46,11 +46,11 @@ namespace CoreXUnitTest
         #region injections
         private void GetInjections()
         {
-            _BatchControllerLogger = (_BatchControllerLogger is null) ? GetBatchControllerLogger() : _BatchControllerLogger;
+            _JobControllerLogger = (_JobControllerLogger is null) ? GetJobControllerLogger() : _JobControllerLogger;
             _JobManagementServiceLogger = (_JobManagementServiceLogger is null) ? GetJobManagementServiceLogger() : _JobManagementServiceLogger;
-            _transactionDBContext = (_transactionDBContext is null) ? GetContext() : _transactionDBContext;
+            _jobmanagemenDBContext = (_jobmanagemenDBContext is null) ? GetContext() : _jobmanagemenDBContext;
             _appSettings = (_appSettings is null) ? GetAppSettings() : _appSettings;
-            _JobManagementService = (_JobManagementService is null) ? GetJobLogservice(_JobManagementServiceLogger, _appSettings, _transactionDBContext) : _JobManagementService;
+            _JobManagementService = (_JobManagementService is null) ? GetJobLogservice(_JobManagementServiceLogger, _appSettings, _jobmanagemenDBContext) : _JobManagementService;
         }
 
         private ILogger<JobManagementService> GetJobManagementServiceLogger()
@@ -60,22 +60,22 @@ namespace CoreXUnitTest
             return logger;
         }
 
-        private TransactionDBContext GetContext()
+        private JobManagementDBContext GetContext()
         {
-            var options = new DbContextOptionsBuilder<TransactionDBContext>()
+            var options = new DbContextOptionsBuilder<JobManagementDBContext>()
              .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=TransactionDB;ConnectRetryCount=0").Options;
-            var context = new TransactionDBContext(options);
+            var context = new JobManagementDBContext(options);
             return context;
         }
-        private ILogger<BatchController> GetBatchControllerLogger()
+        private ILogger<JobController> GetJobControllerLogger()
         {
             ILoggerFactory loggerFactory = (ILoggerFactory)new LoggerFactory();
-            ILogger<BatchController> logger = new Logger<BatchController>(loggerFactory);
+            ILogger<JobController> logger = new Logger<JobController>(loggerFactory);
             return logger;
         }
-        private IJobManagementService GetJobLogservice(ILogger<JobManagementService> logger, IOptions<AppSettings> appsettings, TransactionDBContext context)
+        private IJobManagementService GetJobLogservice(ILogger<JobManagementService> logger, IOptions<AppSettings> appsettings, JobManagementDBContext context)
         {
-            JobsToRun jtr = new JobsToRun();
+            JobsToRunSingleton jtr = new JobsToRunSingleton();
             return new JobManagementService(logger, context,jtr);
         }
 

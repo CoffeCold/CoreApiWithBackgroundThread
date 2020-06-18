@@ -6,13 +6,13 @@ using System.Threading;
 using System.Collections.Concurrent;
 using CoreAPI.Models;
 
-namespace CoreAPI.Helpers
+namespace CoreAPI.Services
 {
-    public class JobsToRun
+    public class JobsToRunSingleton
     {
         private readonly BlockingCollection<Job> _tasks;
 
-        public JobsToRun()
+        public JobsToRunSingleton()
         {
             _tasks = new BlockingCollection<Job>();
         }

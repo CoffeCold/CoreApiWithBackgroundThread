@@ -12,9 +12,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using CoreAPI.Models;
-using CoreAPI.Helpers;
+using CoreAPI.ConfigurationSettings;
 using CoreAPI.Services;
-
+using CoreAPI.Context;
 
 namespace CoreAPI
 {
@@ -26,58 +26,34 @@ namespace CoreAPI
         }
 
         public IConfiguration Configuration { get; }
-        readonly string AllThinkableOrigins = "_myAllThinkableOrigins";
+        readonly string APIOrigins = "_APIOrigins";
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //TODO Narrow CORS Target.
-            services.AddCors(options =>
-            {
-                options.AddPolicy(name: AllThinkableOrigins,
-                                  builder =>
-                                  {
-                                      builder.SetIsOriginAllowedToAllowWildcardSubdomains()
-      .WithOrigins("*")
-      .AllowAnyMethod()
-      .AllowAnyHeader()
-      .Build();
-                                  });
-            });
-
-            // Connection string used for DI context
-            var connectionStringsSection = Configuration.GetSection("ConnectionStrings");
-            services.Configure<ConnectionStrings>(connectionStringsSection);
-            var connectionstrings = connectionStringsSection.Get<ConnectionStrings>();
-
-            services.AddSingleton<JobsToRun, JobsToRun>();
-            services.AddHostedService<JobBackgroundService>();
-            services.AddScoped<IJobManagementService, JobManagementService>();
-            services.AddScoped<IBatchService, BatchService>();
-            services.AddScoped<IBulkService, BulkService>();
-
-
+            services.ConfigureCors(APIOrigins);
+            services.AddCustomServices();
             services.AddControllers().AddNewtonsoftJson();
-            services.AddDbContext<TransactionDBContext>(options =>
-     options.UseSqlServer(connectionstrings.TransactionDBConstr));
+            services.AddDataAccessServices(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            logger.LogInformation("Configure called");
+
+            loggerFactory.AddFile("Logs/myapp-{Date}.txt");
+
+            //logger.LogInformation("Configure called");
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors(AllThinkableOrigins);
-
+                app.UseCors(APIOrigins);
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -85,7 +61,7 @@ namespace CoreAPI
                 endpoints.MapControllers();
             });
 
-            logger.LogInformation("Configure ended");
+            //logger.LogInformation("Configure ended");
 
         }
     }

@@ -89,7 +89,7 @@ Deploy this on a live system
 * - asp.net core 3.x, issue to apply above for core 3.x [Stackoverflow](https://stackoverflow.com/questions/58436732/migration-to-asp-core-3-how-to-migrate-backround-services-service-added-throu) 
 * - start task from hosted background service into the batch/bulk domain [Stackoverflow](https://stackoverflow.com/questions/52020799/net-core-dependency-injection-to-hosted-service) 
 * - enum does not convert properly [Stackoverflow](https://stackoverflow.com/questions/58440400/enum-type-no-longer-working-in-net-core-3-0-frombody-request-object) 
-
+* - multiple background tasks https://stackoverflow.com/questions/52712347/multiple-implementations-of-ihostedservice
 
 ## Contributing
 

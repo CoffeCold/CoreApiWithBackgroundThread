@@ -8,16 +8,16 @@ namespace CoreAPI.Models
 {
 
 
-    public class TransactionDBContext : DbContext
+    public class JobManagementDBContext : DbContext
     {
 
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobLog> JobLogs { get; set; }
 
-        public TransactionDBContext(DbContextOptions<TransactionDBContext> options) : base(options)
+        public JobManagementDBContext(DbContextOptions<JobManagementDBContext> options) : base(options)
         {
         }
-        public TransactionDBContext() : base()
+        public JobManagementDBContext() : base()
         {
         }
 
@@ -27,7 +27,7 @@ namespace CoreAPI.Models
             {
                 //TODO Move it out of source code, only used for populating the test database.
                 optionsBuilder
-                    .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=TransactionDB;ConnectRetryCount=0");
+                    .UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=TransactionDB;ConnectRetryCount=0");
             }
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
-using CoreAPI.Helpers;
+using CoreAPI.ConfigurationSettings;
 using Microsoft.Extensions.Hosting;
 using CoreAPI.Models;
 using Microsoft.Extensions.Logging;
@@ -12,18 +12,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CoreAPI.Services
 {
 
-  
 
     public class JobBackgroundService : BackgroundService
     {
-        private readonly JobsToRun _jobs;
-        private readonly ILogger<BatchService> _logger;
-        private readonly IServiceProvider _serviceProvider; 
+        private readonly JobsToRunSingleton _jobs;
+        private readonly ILogger<JobBackgroundService> _logger;
+        private readonly IServiceProvider _serviceProvider;
         private CancellationTokenSource _tokenSource;
 
         private Task _currentTask;
 
-        public JobBackgroundService(ILogger<BatchService> logger, JobsToRun jobs, IServiceProvider serviceProvider)
+        public JobBackgroundService(ILogger<JobBackgroundService> logger, JobsToRunSingleton jobs, IServiceProvider serviceProvider)
         {
             _jobs = jobs;
             _logger = logger;
@@ -70,26 +69,22 @@ namespace CoreAPI.Services
             {
                 case ExecutionDomain.Batch:
                     {
-                        using (IServiceScope scope = _serviceProvider.CreateScope())
-                        {
-                            var batchService = scope.ServiceProvider.GetService<IBatchService>();
-                            await batchService.ProcessBatch(jobToRun);
-                        }
+                        using IServiceScope scope = _serviceProvider.CreateScope();
+                        var batchService = scope.ServiceProvider.GetService<IBatchService>();
+                        await batchService.ProcessBatch(jobToRun);
                         break;
                     }
                 case ExecutionDomain.Bulk:
                     {
-                        using (IServiceScope scope = _serviceProvider.CreateScope())
-                        {
-                            var bulkService = scope.ServiceProvider.GetService<IBulkService>();
-                            await bulkService.ProcessBulk(jobToRun);
-                        }
+                        using IServiceScope scope = _serviceProvider.CreateScope();
+                        var bulkService = scope.ServiceProvider.GetService<IBulkService>();
+                        await bulkService.ProcessBulk(jobToRun);
                         break;
                     }
             }
- 
+
             _logger.LogInformation("JobSelection & execution job {0} ended", jobToRun.JobId);
-            return jobToRun.JobId; 
+            return jobToRun.JobId;
 
         }
 
@@ -102,5 +97,18 @@ namespace CoreAPI.Services
             // wait when _currentTask is complete
             await Task.WhenAny(_currentTask, Task.Delay(-1, cancellationToken));
         }
+    }
+
+    public class JobBackgroundService_1 : JobBackgroundService
+    {
+        public JobBackgroundService_1(ILogger<JobBackgroundService> logger, JobsToRunSingleton jobs, IServiceProvider serviceProvider) : base(logger, jobs, serviceProvider) { }
+    }
+    public class JobBackgroundService_2 : JobBackgroundService
+    {
+        public JobBackgroundService_2(ILogger<JobBackgroundService> logger, JobsToRunSingleton jobs, IServiceProvider serviceProvider) : base(logger, jobs, serviceProvider) { }
+    }
+    public class JobBackgroundService_3 : JobBackgroundService
+    {
+        public JobBackgroundService_3(ILogger<JobBackgroundService> logger, JobsToRunSingleton jobs, IServiceProvider serviceProvider) : base(logger, jobs, serviceProvider) { }
     }
 }

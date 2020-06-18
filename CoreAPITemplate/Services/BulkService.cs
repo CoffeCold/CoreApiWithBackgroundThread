@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 
 using System.Threading;
 using CoreAPI.Models;
-using CoreAPI.Helpers;
 
 namespace CoreAPI.Services
 {

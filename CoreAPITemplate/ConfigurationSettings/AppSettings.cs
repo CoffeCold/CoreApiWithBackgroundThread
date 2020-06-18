@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreAPI.Helpers
+namespace CoreAPI.ConfigurationSettings
 {
+
     public class AppSettings
     {
         //TODO model for injectable appsettings here 

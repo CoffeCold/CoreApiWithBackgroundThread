@@ -8,26 +8,23 @@ namespace CreateLocalDB
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            using (var context = new TransactionDBContext())
-            {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+            using var context = new JobManagementDBContext();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
 
-                PopulateDB(context);                
-                context.SaveChanges();
+            PopulateDB(context);
+            context.SaveChanges();
 
-            }
 
- 
         }
 
-        private static void PopulateDB(TransactionDBContext context)
+        private static void PopulateDB(JobManagementDBContext context)
         {
                 
-            var job1 = context.Add(new Job() { JobId = new Guid("69562d2a-6b52-47a4-8089-203efa02a3f0"),  Description = "foo",  ExecutionDomain = ExecutionDomain.Batch }).Entity;
-            var log1 = context.Add(new JobLog() { LogId = new Guid("78562d2a-6b52-47a4-8089-203efa02a3f0"),  JobId = new Guid("69562d2a-6b52-47a4-8089-203efa02a3f0"), Logcomment="bar", Logdate = DateTime.Now}).Entity;
+             context.Add(new Job() { JobId = new Guid("69562d2a-6b52-47a4-8089-203efa02a3f0"),  Description = "foo",  ExecutionDomain = ExecutionDomain.Batch });
+             context.Add(new JobLog() { LogId = new Guid("78562d2a-6b52-47a4-8089-203efa02a3f0"),  JobId = new Guid("69562d2a-6b52-47a4-8089-203efa02a3f0"), Logcomment="bar", Logdate = DateTime.Now});
         }
     }
 }

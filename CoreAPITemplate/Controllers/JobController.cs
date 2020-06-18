@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CoreAPI.Helpers;
 using Microsoft.Extensions.Logging;
 using CoreAPI.Models;
 using CoreAPI.Services;
@@ -12,6 +11,8 @@ using CoreAPI.Services;
 namespace CoreAPI.Controllers
 {
     [Route("api/[controller]")]
+    [Route("api/batch")]
+    [Route("api/bulk")]
     [ApiController]
     public class JobController : ControllerBase
     {
@@ -68,7 +69,7 @@ namespace CoreAPI.Controllers
         }
 
         // Post: api/Job
-        // Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Job"}
+        // Body : {"JobId":"00000000-0000-0000-0000-000000000000", "description":"abc", "JobProperty1" :"def" ,"ExecutionDomain":"Batch"}
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,6 +87,5 @@ namespace CoreAPI.Controllers
             }
             return BadRequest();
         }
-
     }
 }
